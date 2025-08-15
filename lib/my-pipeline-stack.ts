@@ -12,7 +12,7 @@ export class MyPipelineStack extends cdk.Stack {
         input: CodePipelineSource.gitHub('volodkevych/my-pipeline', 'main', {
           authentication: cdk.SecretValue.secretsManager('my-pipeline-github-token')
         }),
-        commands: ['npm ci', 'npm run build', 'npx cdk synth']
+        commands: ['npm ci', 'npm run build', 'npx cdk synth', 'npx cdk diff']
       })
     });
   }
