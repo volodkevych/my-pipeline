@@ -9,6 +9,7 @@ export class MyPipelineStack extends cdk.Stack {
 
     const pipeline = new CodePipeline(this, 'Pipeline', {
       pipelineName: 'MyPipeline',
+      crossAccountKeys: true,
       synth: new ShellStep('Synth', {
         input: CodePipelineSource.gitHub('volodkevych/my-pipeline', 'main', {
           authentication: cdk.SecretValue.secretsManager('my-pipeline-github-token')
