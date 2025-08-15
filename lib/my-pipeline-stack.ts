@@ -22,6 +22,6 @@ export class MyPipelineStack extends cdk.Stack {
       env: { account: "681702200272", region: "eu-west-1" }
     }));
 
-    appStage.addPost(new ManualApprovalStep('approval'));
+    appStage.addPre(new ManualApprovalStep('approval'));
   }
 }
