@@ -18,16 +18,19 @@ export class MyPipelineStack extends cdk.Stack {
       })
     });
 
-    const appStage = pipeline.addStage(new MyPipelineAppStage(this, "test", {
+    // Add all stages to a wave for parallel execution
+    const wave = pipeline.addWave('DeployWave', {
+      pre: [new ManualApprovalStep('approval')]
+    });
+    
+    wave.addStage(new MyPipelineAppStage(this, "test", {
       env: { account: "673895029887", region: "eu-central-1" }
     }));
-    const appStageCrossRegion = pipeline.addStage(new MyPipelineAppStage(this, "test-cross-region", {
+    wave.addStage(new MyPipelineAppStage(this, "test-cross-region", {
       env: { account: "673895029887", region: "us-east-1" }
     }));
-    const appStageCrossAccount = pipeline.addStage(new MyPipelineAppStage(this, "test-cross-account", {
+    wave.addStage(new MyPipelineAppStage(this, "test-cross-account", {
       env: { account: "681702200272", region: "us-west-2" }
     }));
-
-    appStage.addPre(new ManualApprovalStep('approval'));
   }
 }
