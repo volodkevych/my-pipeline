@@ -16,6 +16,10 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 ## Pre-reqs
 
 In order to run this, you need:
-1. Change `account` and `region` settings in `my-pipeline.ts` to point to your account
-2. Bootstrap the account (or accounts): https://docs.aws.amazon.com/cdk/v2/guide/cdk-pipeline.html#cdk-pipeline-bootstrap
-3. Define `my-pipeline-github-token` token in GitHub → Settings → Developer settings → Personal access tokens with access to Commits and Webhooks
+1. Change `account` and `region` settings in `bin/my-pipeline.ts` and `lib/my-pipeline-stack.ts` (pipeline stages) to point to your accounts
+2. Bootstrap the pipeline account: `npx cdk bootstrap aws://ACCOUNT/REGION`
+3. Bootstrap cross-account/region targets with trust to pipeline account:
+   ```bash
+   npx cdk bootstrap aws://TARGET_ACCOUNT/TARGET_REGION --trust PIPELINE_ACCOUNT
+   ```
+4. Create `my-pipeline-github-token` secret in AWS Secrets Manager with your GitHub personal access token (needs repo access)
