@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template for pipeline deployment'
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+    Description: Environment name
+  
+  BucketPrefix:
+    Type: String
+    Default: sample-app
+    Description: Prefix for S3 bucket names
+
+Resources:
+  # Application storage bucket
+  Invalid Resource Name With Spaces & Symbols!:
+    Type: AWS::S3::Bucket
+    Properties:
+      # Bucket name from parameter
+      BucketName: !Ref NonExistentParameter
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  # Application execution role
+  CircularDep1:
+    Type: AWS::IAM::Role
+    Properties:
+      # Role name configuration
+      RoleName: !Ref CircularDep2
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+
+  # Application function
+  CircularDep2:
+    Type: AWS::Lambda::Function
+    Properties:
+      # Function name from role reference
+      FunctionName: !Ref CircularDep1
+      Runtime: nodejs18.x
+      Handler: index.handler
+      # Environment configuration
+      Environment:
+        Variables:
+          # Storage bucket reference
+          BUCKET_NAME: !Ref NonExistentBucket
+
+  # Secondary storage bucket
+  BrokenBucket:
+    Type: AWS::S3::Buckett
+    Properties:
+      BucketName: !Sub '${BucketPrefix}-secondary-${Environment}'
+
+  # Additional storage resource
+  AnotherBrokenResource:
+    Type: AWS::S3::Bucket
+    Properties:
+      # Bucket configuration
+      InvalidPropertyName: test-bucket
+      # Bucket naming pattern
+      BucketName: !Sub '${BucketPrefix}-additional-${Environment'
+
+# Stack outputs
+Outputs:
+  # Application resource reference
+  NonExistentOutput:
+    Description: This references a resource that doesn't exist
+    Value: !Ref NonExistentResource
+  
+  # Bucket attribute reference
+  MalformedGetAtt:
+    Description: Malformed GetAtt function
+    Value: !GetAtt BrokenBucket.NonExistentAttribute
+    Export:
+      # Export configuration
+      Name: Invalid Export Name With Spaces
